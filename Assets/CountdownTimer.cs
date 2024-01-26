@@ -10,6 +10,8 @@ public class CountdownTimer : MonoBehaviour
     [SerializeField] Text countdown;
     [SerializeField] CarControls carControls;
 
+    bool isCountdownOver = false;
+
     void Start()
     {
         currentTime = startingTime;
@@ -18,15 +20,18 @@ public class CountdownTimer : MonoBehaviour
 
     void Update()
     {
-        if (currentTime > 0)
+        if (!isCountdownOver)
         {
-            currentTime -= Time.deltaTime;
-            countdown.text = currentTime.ToString("0");
-        }
-        else
-        {
-            currentTime = 0;
-            EnableCarControl();
+            if (currentTime > 0)
+            {
+                currentTime -= Time.deltaTime;
+                countdown.text = currentTime.ToString("0");
+            }
+            else
+            {
+                currentTime = 0;
+                EnableCarControl();
+            }
         }
     }
 
@@ -39,11 +44,12 @@ public class CountdownTimer : MonoBehaviour
     void EnableCarControl()
     {
         carControls.enabled = true;
+        isCountdownOver = true;
         Debug.Log("Car control enabled.");
     }
 
     public bool IsCountdownOver()
     {
-        return currentTime <= 0;
+        return isCountdownOver;
     }
 }

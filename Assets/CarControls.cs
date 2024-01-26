@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CarControls : MonoBehaviour
 {
-    public float driftFactor = 0.97f;
+    public float driftFactor = 0.95f;
     public float accelerationFactor = 30f;
     public float turnFactor = .8f;
     public float maximumSpeed = 40f;

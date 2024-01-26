@@ -7,7 +7,7 @@ public class NewBehaviourScript : MonoBehaviour
     [SerializeField] GameObject[] trapPrefab;
     [SerializeField] float minTras;
     [SerializeField] float maxTras;
-    private float spawnProbability = 1f;
+    private float spawnProbability = 0f;
 
     [SerializeField] Transform parentTransform;
 
