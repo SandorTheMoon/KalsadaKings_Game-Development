@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Traps : MonoBehaviour
 {
     [SerializeField] GameObject[] trapPrefab;
     [SerializeField] float minTras;
@@ -11,13 +11,23 @@ public class NewBehaviourScript : MonoBehaviour
 
     [SerializeField] Transform parentTransform;
 
+    // List to keep track of spawned traps
+    private List<GameObject> spawnedTraps = new List<GameObject>();
+
     void Start()
     {
         TrySpawnTrap();
     }
 
-    void TrySpawnTrap()
+    public void TrySpawnTrap()
     {
+        // Destroy previously spawned traps
+        foreach (GameObject trap in spawnedTraps)
+        {
+            Destroy(trap);
+        }
+        spawnedTraps.Clear(); // Clear the list of spawned traps
+
         if (Random.value <= spawnProbability)
         {
             SpawnTrap();
@@ -40,10 +50,22 @@ public class NewBehaviourScript : MonoBehaviour
             GameObject newTrap = Instantiate(trapPrefab[Random.Range(0, trapPrefab.Length)]);
             newTrap.transform.SetParent(parentTransform, false);
             newTrap.transform.localPosition = spawnPosition;
+
+            // Add the spawned trap to the list
+            spawnedTraps.Add(newTrap);
         }
         else
         {
             Debug.LogError("Parent transform is not assigned!");
         }
+    }
+
+    // Method to update the spawn probability
+    public void UpdateSpawnProbability(float incrementAmount)
+    {
+        spawnProbability += incrementAmount;
+
+        // Log the current value of spawnProbability to the console
+        Debug.Log("Spawn Probability: " + spawnProbability);
     }
 }

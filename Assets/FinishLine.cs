@@ -1,4 +1,3 @@
-// FinishLine.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +7,9 @@ public class FinishLine : MonoBehaviour
     public Transform player;
     public LapTimer lapTimer; // Reference to the LapTimer script
 
-    private int lapsCompleted = 0;
-    private bool isGamePaused = false;
+    // List of Traps scripts associated with different parentTrapSpawner GameObjects
+    public List<Traps> trapsList = new List<Traps>();
+
     private Vector3 lastCheckpoint;
 
     void Start()
@@ -29,29 +29,34 @@ public class FinishLine : MonoBehaviour
 
             if (dotProduct > 0f)
             {
-                lapsCompleted++;
-
-                if (lapsCompleted == 2 && !isGamePaused)
+                // Increment spawnProbability by 0.05 for each Traps script
+                foreach (Traps traps in trapsList)
                 {
-                    PauseGame();
-                    lapTimer.StartLapTimer(); // Start the lap timer when the player completes 2 laps
+                    if (traps != null)
+                    {
+                        traps.UpdateSpawnProbability(0.05f);
+                        traps.TrySpawnTrap(); // Try to spawn a trap based on the updated probability
+                    }
                 }
+
+                // Reset the lap timer when the player crosses the finish line
+                lapTimer.StartLapTimer();
             }
             else
             {
-                lapsCompleted--;
+                // Reduce spawnProbability by 0.05 for each Traps script
+                foreach (Traps traps in trapsList)
+                {
+                    if (traps != null)
+                    {
+                        traps.UpdateSpawnProbability(-0.05f);
+                    }
+                }
+
                 Debug.Log("Wrong direction! Resetting position to the last checkpoint.");
                 player.position = lastCheckpoint;
             }
         }
-    }
-
-    void PauseGame()
-    {
-        Time.timeScale = 0f;
-        isGamePaused = true;
-
-        Debug.Log("Game Paused. Player crossed the finish line twice.");
     }
 
     public void SetCheckpoint(Vector3 checkpointPosition)

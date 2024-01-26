@@ -7,12 +7,13 @@ public class LapTimer : MonoBehaviour
 {
     public FinishLine finishLine;
     public Text countdownText;
-    private float countdownDuration = 120f; // 2 minutes
+    private float initialCountdownDuration = 80f; // Initial countdown duration
+    private float countdownDuration = 80f; // Current countdown duration
     private bool isTimerRunning = false;
 
     private void Start()
     {
-        countdownText.text = FormatTime(countdownDuration);
+        countdownText.text = FormatTime(initialCountdownDuration);
         StartCoroutine(StartDelay());
     }
 
@@ -49,6 +50,6 @@ public class LapTimer : MonoBehaviour
     // Call this method when the car crosses the finish line
     public void StartLapTimer()
     {
-        countdownDuration = 120f; // Reset the countdown duration to 2 minutes
+        countdownDuration = initialCountdownDuration; // Reset the countdown duration to the initial value
     }
 }
