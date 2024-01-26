@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -76,6 +75,12 @@ public class CarSelection : MonoBehaviour
 
     public void Race()
     {
+        StartCoroutine(DelayedLoadScene());
+    }
+
+    IEnumerator DelayedLoadScene()
+    {
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene("NewScene");
     }
 }

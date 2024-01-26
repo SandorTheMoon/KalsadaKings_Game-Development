@@ -40,7 +40,7 @@ public class FinishLine : MonoBehaviour
                 }
 
                 // Reset the lap timer when the player crosses the finish line
-                lapTimer.StartLapTimer();
+                lapTimer.RestartLapTimer();
             }
             else
             {

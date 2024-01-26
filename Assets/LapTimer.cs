@@ -1,20 +1,34 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LapTimer : MonoBehaviour
 {
     public FinishLine finishLine;
     public Text countdownText;
-    private float initialCountdownDuration = 80f; // Initial countdown duration
-    private float countdownDuration = 80f; // Current countdown duration
+    public Image gameOverUI;
+    public Button gameOverRestartButton;
+    public Button gameOverQuitButton;
+
+    private float initialCountdownDuration = 80f;
+    private float countdownDuration = 80f;
     private bool isTimerRunning = false;
+
+    [SerializeField] CarControls carControls;
 
     private void Start()
     {
+        gameOverUI.gameObject.SetActive(false);
+        gameOverRestartButton.gameObject.SetActive(false);
+        gameOverQuitButton.gameObject.SetActive(false);
+
         countdownText.text = FormatTime(initialCountdownDuration);
         StartCoroutine(StartDelay());
+
+        // Assign listeners during Start to ensure they are set up properly
+        gameOverRestartButton.onClick.AddListener(RestartGame);
+        gameOverQuitButton.onClick.AddListener(QuitGame);
     }
 
     private void Update()
@@ -29,7 +43,7 @@ public class LapTimer : MonoBehaviour
             else
             {
                 countdownDuration = 0f;
-                // Handle when the countdown reaches zero (e.g., end the game)
+                EndGame();
             }
         }
     }
@@ -47,9 +61,36 @@ public class LapTimer : MonoBehaviour
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    // Call this method when the car crosses the finish line
-    public void StartLapTimer()
+    private void EndGame()
     {
-        countdownDuration = initialCountdownDuration; // Reset the countdown duration to the initial value
+        carControls.enabled = false;
+
+        gameOverUI.gameObject.SetActive(true);
+        gameOverRestartButton.gameObject.SetActive(true);
+        gameOverQuitButton.gameObject.SetActive(true);
+    }
+
+    public void RestartGame()
+    {
+        carControls.enabled = true;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Debug.Log("working");
+
+        isTimerRunning = false;
+        countdownDuration = initialCountdownDuration;
+        countdownText.text = FormatTime(countdownDuration);
+        gameOverUI.gameObject.SetActive(false);
+        gameOverRestartButton.gameObject.SetActive(false);
+        gameOverQuitButton.gameObject.SetActive(false);
+    }
+
+    public void QuitGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 2);
+    }
+
+    public void RestartLapTimer()
+    {
+        countdownDuration = initialCountdownDuration;
     }
 }

@@ -7,7 +7,7 @@ public class Traps : MonoBehaviour
     [SerializeField] GameObject[] trapPrefab;
     [SerializeField] float minTras;
     [SerializeField] float maxTras;
-    private float spawnProbability = 0f;
+    private float spawnProbability = 1f;
 
     [SerializeField] Transform parentTransform;
 
