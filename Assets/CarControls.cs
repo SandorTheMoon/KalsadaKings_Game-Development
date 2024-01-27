@@ -1,13 +1,12 @@
-// CarControls.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CarControls : MonoBehaviour
 {
-    public float driftFactor = 0.95f;
+    public float driftFactor = 0.97f;
     public float accelerationFactor = 60f;
-    public float turnFactor = .8f;
+    public float turnFactor = .7f;
     public float maximumSpeed = 70f;
 
     float acceleration = 0f;
@@ -20,11 +19,17 @@ public class CarControls : MonoBehaviour
     bool isSpeedBoostActive = false;
     bool isSlipperyEffectActive = false;
     float originalDriftFactor;
+    float originalMaximumSpeed;
+
+    bool isInSlowdownArea = false;
+
+    Coroutine slowdownCoroutine;
 
     void Awake()
     {
         carRB = GetComponent<Rigidbody2D>();
         originalDriftFactor = driftFactor;
+        originalMaximumSpeed = maximumSpeed;
     }
 
     void FixedUpdate()
@@ -32,6 +37,50 @@ public class CarControls : MonoBehaviour
         ApplyEngineForce();
         KillOrthogonalVelocity();
         ApplySteering();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Shortcut 1"))
+        {
+            // Enter slowdown area
+            isInSlowdownArea = true;
+            if (slowdownCoroutine == null)
+            {
+                slowdownCoroutine = StartCoroutine(SlowdownCar());
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Shortcut 1"))
+        {
+            // Exit slowdown area
+            isInSlowdownArea = false;
+            if (slowdownCoroutine != null)
+            {
+                StopCoroutine(slowdownCoroutine);
+                slowdownCoroutine = null;
+            }
+            ResetSpeed();
+        }
+    }
+
+    IEnumerator SlowdownCar()
+    {
+        while (isInSlowdownArea)
+        {
+            // You can adjust the slowdown factor based on your requirements
+            maximumSpeed *= 0.1f;
+            yield return null;
+        }
+    }
+
+    void ResetSpeed()
+    {
+        // Reset the speed to its original value
+        maximumSpeed = originalMaximumSpeed;
     }
 
     void ApplyEngineForce()
@@ -66,6 +115,8 @@ public class CarControls : MonoBehaviour
 
         carRB.velocity = forwardVelocity + rightVelocity * driftFactor;
     }
+
+    // ... (rest of the code)
 
     public void SetInputVector(Vector2 input)
     {

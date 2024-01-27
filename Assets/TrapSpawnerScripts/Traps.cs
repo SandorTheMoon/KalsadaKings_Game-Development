@@ -7,11 +7,10 @@ public class Traps : MonoBehaviour
     [SerializeField] GameObject[] trapPrefab;
     [SerializeField] float minTras;
     [SerializeField] float maxTras;
-    private float spawnProbability = 1f;
+    private float spawnProbability = 0f;
 
     [SerializeField] Transform parentTransform;
 
-    // List to keep track of spawned traps
     private List<GameObject> spawnedTraps = new List<GameObject>();
 
     void Start()
@@ -21,12 +20,11 @@ public class Traps : MonoBehaviour
 
     public void TrySpawnTrap()
     {
-        // Destroy previously spawned traps
         foreach (GameObject trap in spawnedTraps)
         {
             Destroy(trap);
         }
-        spawnedTraps.Clear(); // Clear the list of spawned traps
+        spawnedTraps.Clear();
 
         if (Random.value <= spawnProbability)
         {
@@ -51,7 +49,6 @@ public class Traps : MonoBehaviour
             newTrap.transform.SetParent(parentTransform, false);
             newTrap.transform.localPosition = spawnPosition;
 
-            // Add the spawned trap to the list
             spawnedTraps.Add(newTrap);
         }
         else
@@ -60,12 +57,10 @@ public class Traps : MonoBehaviour
         }
     }
 
-    // Method to update the spawn probability
     public void UpdateSpawnProbability(float incrementAmount)
     {
         spawnProbability += incrementAmount;
 
-        // Log the current value of spawnProbability to the console
         Debug.Log("Spawn Probability: " + spawnProbability);
     }
 }
