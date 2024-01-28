@@ -16,11 +16,28 @@ public class PowerUpSpawner : MonoBehaviour
         TrySpawnPower();
     }
 
-    void TrySpawnPower()
+    public void TrySpawnPower()
     {
+        DestroyExistingPowerUps();
+
         if (Random.value <= spawnProbability)
         {
             SpawnPower();
+        }
+    }
+
+    void DestroyExistingPowerUps()
+    {
+        if (parentTransform != null)
+        {
+            foreach (Transform child in parentTransform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        else
+        {
+            Debug.LogError("Parent transform is not assigned!");
         }
     }
 

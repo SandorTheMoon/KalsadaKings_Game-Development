@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class CarControls : MonoBehaviour
 {
-    public float driftFactor = 0.97f;
+    public float driftFactor = 0.96f;
     public float accelerationFactor = 60f;
     public float turnFactor = .7f;
     public float maximumSpeed = 70f;
+    public AudioClip speedBoostSound;
 
     float acceleration = 0f;
     float steering = 0f;
@@ -15,6 +16,8 @@ public class CarControls : MonoBehaviour
     float upwardVelocity = 0f;
 
     Rigidbody2D carRB;
+    AudioSource audioSource;
+
 
     bool isSpeedBoostActive = false;
     bool isSlipperyEffectActive = false;
@@ -28,6 +31,7 @@ public class CarControls : MonoBehaviour
     void Awake()
     {
         carRB = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
         originalDriftFactor = driftFactor;
         originalMaximumSpeed = maximumSpeed;
     }
@@ -43,7 +47,6 @@ public class CarControls : MonoBehaviour
     {
         if (other.CompareTag("Shortcut 1"))
         {
-            // Enter slowdown area
             isInSlowdownArea = true;
             if (slowdownCoroutine == null)
             {
@@ -56,7 +59,6 @@ public class CarControls : MonoBehaviour
     {
         if (other.CompareTag("Shortcut 1"))
         {
-            // Exit slowdown area
             isInSlowdownArea = false;
             if (slowdownCoroutine != null)
             {
@@ -71,15 +73,13 @@ public class CarControls : MonoBehaviour
     {
         while (isInSlowdownArea)
         {
-            // You can adjust the slowdown factor based on your requirements
-            maximumSpeed *= 0.1f;
+            maximumSpeed *= 0.3f;
             yield return null;
         }
     }
 
     void ResetSpeed()
     {
-        // Reset the speed to its original value
         maximumSpeed = originalMaximumSpeed;
     }
 
@@ -116,8 +116,6 @@ public class CarControls : MonoBehaviour
         carRB.velocity = forwardVelocity + rightVelocity * driftFactor;
     }
 
-    // ... (rest of the code)
-
     public void SetInputVector(Vector2 input)
     {
         steering = input.x;
@@ -128,6 +126,11 @@ public class CarControls : MonoBehaviour
     {
         if (!isSpeedBoostActive)
         {
+            if (speedBoostSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(speedBoostSound);
+            }
+
             StartCoroutine(ActivateSpeedBoost(boostAmount));
         }
     }
@@ -136,14 +139,14 @@ public class CarControls : MonoBehaviour
     {
         isSpeedBoostActive = true;
         maximumSpeed += boostAmount;
-        accelerationFactor *= 1.5f;
+        accelerationFactor *= 1.2f;
 
         Debug.Log("Speed boost applied: " + boostAmount);
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(7f);
 
         maximumSpeed -= boostAmount;
-        accelerationFactor /= 1.5f;
+        accelerationFactor /= 1.2f;
 
         Debug.Log("Speed boost expired");
 

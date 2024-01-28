@@ -2,11 +2,13 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class LapTimer : MonoBehaviour
 {
     public FinishLine finishLine;
-    public Text countdownText;
+    public TextMeshProUGUI countdownText;
+    public Image MenuBackground;
     public Image gameOverUI;
     public Button gameOverRestartButton;
     public Button gameOverQuitButton;
@@ -19,6 +21,7 @@ public class LapTimer : MonoBehaviour
 
     private void Start()
     {
+        MenuBackground.gameObject.SetActive(false);
         gameOverUI.gameObject.SetActive(false);
         gameOverRestartButton.gameObject.SetActive(false);
         gameOverQuitButton.gameObject.SetActive(false);
@@ -26,7 +29,6 @@ public class LapTimer : MonoBehaviour
         countdownText.text = FormatTime(initialCountdownDuration);
         StartCoroutine(StartDelay());
 
-        // Assign listeners during Start to ensure they are set up properly
         gameOverRestartButton.onClick.AddListener(RestartGame);
         gameOverQuitButton.onClick.AddListener(QuitGame);
     }
@@ -64,7 +66,8 @@ public class LapTimer : MonoBehaviour
     private void EndGame()
     {
         carControls.enabled = false;
-
+        
+        MenuBackground.gameObject.SetActive(true);
         gameOverUI.gameObject.SetActive(true);
         gameOverRestartButton.gameObject.SetActive(true);
         gameOverQuitButton.gameObject.SetActive(true);
@@ -76,9 +79,7 @@ public class LapTimer : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         Debug.Log("working");
 
-        isTimerRunning = false;
-        countdownDuration = initialCountdownDuration;
-        countdownText.text = FormatTime(countdownDuration);
+        MenuBackground.gameObject.SetActive(false);
         gameOverUI.gameObject.SetActive(false);
         gameOverRestartButton.gameObject.SetActive(false);
         gameOverQuitButton.gameObject.SetActive(false);

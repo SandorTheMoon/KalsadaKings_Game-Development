@@ -1,11 +1,10 @@
-// SpeedBoostPowerUp.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpeedBoostPowerUp : MonoBehaviour
 {
-    public float speedBoostAmount = 3000.0f;
+    public float speedBoostAmount = 70f;
 
     void OnTriggerEnter2D(Collider2D other)
     {
